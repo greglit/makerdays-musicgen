@@ -15,7 +15,7 @@ import spaces
 model = MusicgenForConditionalGeneration.from_pretrained("facebook/musicgen-small")
 processor = MusicgenProcessor.from_pretrained("facebook/musicgen-small")
 
-title = "MusicGen Streaming"
+title = "ScaDS.AI KI-Werkstatt"
 
 description = """
 Stream the outputs of the MusicGen text-to-music model by playing the generated audio as soon as the first chunk is ready. 
@@ -206,7 +206,42 @@ def generate_audio(text_prompt, audio_length_in_s=10.0, play_steps_in_s=2.0, see
         yield sampling_rate, new_audio
 
 
-demo = gr.Interface(
+
+
+######### USER INTERFACE ###############
+
+
+
+hands_on = gr.Interface(
+    fn=generate_audio,
+    inputs=[
+        gr.Text(label="Musikbeschreibung (Prompt)", value="Abenteuer Computerspielmusik"),
+        gr.Slider(10, 60, value=15, step=5, label="Musiklänge in Sekunden"),
+    ],
+    outputs=[
+        gr.Audio(label="Erzeugte Musik", streaming=True, autoplay=True)
+    ],
+    examples=[
+        ["An 80s driving pop song with heavy drums and synth pads in the background", 30, 1.5, 5],
+        ["A cheerful country song with acoustic guitars", 30, 1.5, 5],
+        ["90s rock song with electric guitar and heavy drums", 30, 1.5, 5],
+        ["a light and cheerly EDM track, with syncopated drums, aery pads, and strong emotions bpm: 130", 30, 1.5, 5],
+        ["lofi slow bpm electro chill with organic samples", 30, 1.5, 5],
+    ],
+    title="ScaDS.AI KI-Werkstatt: Musik erzeugen mit KI",
+    description="Gebe links ein was für Musik du erzeugen willst und hör dir rechts an was die KI erzeugt hat.",
+    article=article,
+    cache_examples=False,
+    allow_flagging="never",
+    submit_btn="Musik erzeugen",
+    stop_btn="Stoppen",
+    clear_btn="Zurücksetzen"
+)
+
+
+
+
+hands_on_pro = gr.Interface(
     fn=generate_audio,
     inputs=[
         gr.Text(label="Prompt", value="80s pop track with synth and instrumentals"),
@@ -227,8 +262,18 @@ demo = gr.Interface(
     title=title,
     description=description,
     article=article,
-    cache_examples=False,
+    cache_examples=False
+)
+
+with gr.Blocks() as introduction:
+    gr.Markdown("Einführung blablabla")
+
+demo = gr.TabbedInterface(
+    [hands_on, hands_on_pro], 
+    ["Direkt Loslegen", "Für Profis"]
 )
 
 
-demo.queue().launch()
+demo.queue().launch(
+    #share=True
+)
