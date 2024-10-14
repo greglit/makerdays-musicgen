@@ -15,7 +15,7 @@ import spaces
 model = MusicgenForConditionalGeneration.from_pretrained("facebook/musicgen-small")
 processor = MusicgenProcessor.from_pretrained("facebook/musicgen-small")
 
-title = "ScaDS.AI KI-Werkstatt"
+title = "ScaDS.AI KI-Werkstatt: Musik erzeugen mit KI"
 
 description = """
 Stream the outputs of the MusicGen text-to-music model by playing the generated audio as soon as the first chunk is ready. 
@@ -210,37 +210,6 @@ def generate_audio(text_prompt, audio_length_in_s=10.0, play_steps_in_s=2.0, see
 
 ######### USER INTERFACE ###############
 
-
-
-hands_on = gr.Interface(
-    fn=generate_audio,
-    inputs=[
-        gr.Text(label="Musikbeschreibung (Prompt)", value="Abenteuer Computerspielmusik"),
-        gr.Slider(10, 60, value=15, step=5, label="Musiklänge in Sekunden"),
-    ],
-    outputs=[
-        gr.Audio(label="Erzeugte Musik", streaming=True, autoplay=True)
-    ],
-    examples=[
-        ["An 80s driving pop song with heavy drums and synth pads in the background", 30, 1.5, 5],
-        ["A cheerful country song with acoustic guitars", 30, 1.5, 5],
-        ["90s rock song with electric guitar and heavy drums", 30, 1.5, 5],
-        ["a light and cheerly EDM track, with syncopated drums, aery pads, and strong emotions bpm: 130", 30, 1.5, 5],
-        ["lofi slow bpm electro chill with organic samples", 30, 1.5, 5],
-    ],
-    title="ScaDS.AI KI-Werkstatt: Musik erzeugen mit KI",
-    description="Gebe links ein was für Musik du erzeugen willst und hör dir rechts an was die KI erzeugt hat.",
-    article=article,
-    cache_examples=False,
-    allow_flagging="never",
-    submit_btn="Musik erzeugen",
-    stop_btn="Stoppen",
-    clear_btn="Zurücksetzen"
-)
-
-
-
-
 hands_on_pro = gr.Interface(
     fn=generate_audio,
     inputs=[
@@ -260,20 +229,107 @@ hands_on_pro = gr.Interface(
         ["lofi slow bpm electro chill with organic samples", 30, 1.5, 5],
     ],
     title=title,
-    description=description,
+    description="Dieses Tool basiert auf einem Hugging Face Space (https://huggingface.co/spaces/sanchit-gandhi/musicgen-streaming) und streamt die Ausgaben des MusicGen text-to-music Modells, indem die generierte Audio-Datei abgespielt wird, sobald der erste Abschnitt bereit ist. Die Demo verwendet MusicGen Small in der Huggin Face Transformers-Bibliothek (https://huggingface.co/facebook/musicgen-small). Beachte, dass die Demo am besten im Chrome-Browser funktioniert. Wenn kein Audio ausgegeben wird, versuche, den Browser auf Chrome zu wechseln.",
     article=article,
     cache_examples=False
 )
 
+
+
+
+
+hands_on = gr.Interface(
+    fn=generate_audio,
+    inputs=[
+        gr.Text(label="Musikbeschreibung", value="Ein fröhliches Lied, perfekt für ein Abenteuer im Computerspiel!"),
+        gr.Slider(10, 60, value=15, step=5, label="Musiklänge in Sekunden"),
+    ],
+    outputs=[
+        gr.Audio(label="Erzeugte Musik", streaming=True, autoplay=True)
+    ],
+    examples=[
+        ["Eine energiegeladene Musik mit schnellen Rhythmen, perfekt für ein aufregendes Autorennen!", 30, 1.5, 5],
+        ["Eine melodische Klaviermusik, die an einen zauberhaften Wald erinnert.", 30, 1.5, 5],
+        ["Ein spannendes Rocklied mit kräftigen Trommeln, ideal für das letzte Level meines Spiels!", 30, 1.5, 5],
+        ["Eine entspannte Chill-Out Musik mit sanften Klängen", 30, 1.5, 5],
+        ["Elektronische Musik zum Tanzen mit 130 Schlägen pro Minute", 30, 1.5, 5],
+    ],
+    title="ScaDS.AI KI-Werkstatt: Musik erzeugen mit KI",
+    description="Gebe links ein was für Musik du erzeugen willst und hör dir rechts an was die KI erzeugt hat.",
+    cache_examples=False,
+    allow_flagging="never",
+    submit_btn="Musik erzeugen",
+    stop_btn="Stoppen",
+    clear_btn="Zurücksetzen"
+)
+
 with gr.Blocks() as introduction:
-    gr.Markdown("Einführung blablabla")
+    gr.Markdown("""
+    # Willkommen zur ScaDS.AI KI-Werkstatt!
+    <p style="font-size: 20px;">
+    Hier kannst du etwas Spannendes ausprobieren: <b>Mit einer künstlichen Intelligenz Musik erzeugen!</b> 
+    Alles, was du tun musst, ist einen Satz einzugeben, und dann wirst du hören, wie der Computer versucht, 
+    daraus Musik zu machen. Vielleicht hast du ja Lust die erstellte Musik für dein eigenes Computerspiel zu verwenden?
+    </p>
+                
+    ## Anleitung:
+    <p style="font-size: 20px;">
+    1. Gib in das Textfeld einen kurzen Satz ein, zum Beispiel "Computerspiel Osterhase".<br/>
+    2. Drücke auf den Knopf "Musik Erzeugen", und schon wird aus deinem Satz Musik!<br/>
+    3. Höre dir an, was der Computer sich ausgedacht hat. Ist das nicht cool?<br/>
+    4. Wenn dir die Musik gefällt, kannst du sie mit dem Pfeilknopf oben rechts herunterladen.<br/>
+    </p>
+                
+    ## Tipps:
+    <p style="font-size: 20px;">
+        <ul style="font-size: 20px;">
+          <li>Mit dem Schieberegler kannst du einstellen wie lang dein Musikstück werden soll.</li>
+          <li>Mit dem roten Knopf "Stoppen" kannst du das erzeugen abbrechen, wenn es dir nicht gefällt.</li>
+          <li>Schau dir auch gerne die Beispieltexte unten an und sammel Ideen für deine eigenen Musikstücke!</li>
+        </ul>
+    <p style="font-size: 20px;">
+
+    """)
+with gr.Blocks() as explanation:   
+    gr.Markdown("""
+        # Wie macht der Computer Musik?
+        <p style="font-size: 20px;">
+        Die Art von KI, die in diesem Tool verwendet wird, heißt <b>Transformer</b>. Ein Transformer ist eine spezielle Art von 
+        künstlicher Intelligenz (KI), die darauf trainiert wurde, sehr viele Daten zu verstehen – so ähnlich wie unser 
+        Gehirn Dinge lernt, wenn wir viele Informationen bekommen. Ein Transformer wird mit unzähligen Beispielen trainiert, 
+        damit er gut darin wird, Sprache oder andere Informationen zu verarbeiten.
+        </p>
+
+        ## 1. Transformer – Wie versteht der Computer Sprache?
+        <p style="font-size: 20px;">
+        Transformer sind besonders gut darin, Dinge zu „übersetzen“. Sie können zum Beispiel Sätze von einer Sprache in eine 
+        andere übersetzen. Musik ist für den Transformer auch nur eine Art Sprache. Der Transformer, den wir hier verwenden, 
+        nimmt also deine Sätze und „übersetzt“ sie in Musik! Wenn du also „fröhlicher Tanz“ eingibst, denkt der Transformer 
+        darüber nach, wie man diesen Satz in die Sprache der Musik übersetzen könnte und erzeugt fröhliche, tanzbare Klänge.
+        </p>
+
+        ## 2. MusicGen – Der Musiker im Computer 
+        <p style="font-size: 20px;">
+        Der Transformer, den wir hier verwenden, heißt <b>MusicGen</b> und wurde von Meta (Facebook) entwickelt, um Musik aus Text zu erzeugen. 
+        MusicGen wurde mit über 20.000 Stunden Musikdaten trainiert, um zu lernen, wie man geschriebenen Text in Musik übersetzen kann.
+        MusicGen kann durch das Training neue Musik erzeugen, die es davor noch nicht gab. Aber ohne die bereits bestehende Musik, könnte MusicGen das niemals lernen!
+        </p>
+
+        ## 3. Streaming – Musik in Echtzeit
+        <p style="font-size: 20px;">
+        In diesem Tool verwenden wir <b>Streaming</b>, damit du nicht lange warten musst, bis du etwas hörst. Streaming bedeutet, 
+        dass die Musik in kleinen Portioenen erzeugt wird, und sobald die erste Portion fertig ist, wird sie sofort abgespielt. Du 
+        musst also nicht warten, bis das ganze Musikstück erstellt ist. Während du den Anfang der Musik hörst, wird der Rest 
+        noch im Hintergrund erzeugt. So kannst du sofort erleben, was der Transformer aus deinem Text gemacht hat!
+        </p>
+        """)
 
 demo = gr.TabbedInterface(
-    [hands_on, hands_on_pro], 
-    ["Direkt Loslegen", "Für Profis"]
+    [introduction, hands_on, explanation, hands_on_pro], 
+    ["Willkommen!", "Musik machen!", "Wie macht der Computer Musik?", "Admin"]
 )
 
 
 demo.queue().launch(
-    #share=True
+    share=True
 )
